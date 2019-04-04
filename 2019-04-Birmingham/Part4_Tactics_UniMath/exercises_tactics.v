@@ -82,3 +82,66 @@ Definition iter (A : UU) (a : A) (f : A → A) : nat → A :=
 Notation "f ̂ n" := (λ x, iter _ x f n) (at level 10).
 
 Definition sub (m n : nat) : nat := pred ̂ n m.
+
+
+(* EXERCISES *)
+
+Definition exer_1 (A B C : UU) : A × (B ⨿ C) → (A × B) ⨿ (A × C).
+Proof.
+  intro H.
+  destruct H as [H1 H2].
+  destruct H2 as [Hb | Hc].
+  - apply inl.
+    apply tpair.
+    + exact H1.
+    + exact Hb.
+    (* exact (tpair (λ _, B) H1 Hb). *)
+  - apply inr.
+    apply tpair.
+    + exact H1.
+    + exact Hc.
+Defined.
+
+Definition exer_2 (A : UU) : (A → A) → (A → A).
+Proof.
+  intro H.
+  exact (idfun A).
+Defined.
+Print exer_2.
+
+Print transportf.
+About transportf.
+About bool_rect.
+Check transportf.
+About ind_bool.
+About nat.
+About tt.
+
+Definition bool_map : (bool -> UU)
+  := bool_rect (fun _ => UU) unit empty.
+
+About nat_rect.
+
+
+Definition exer_3_practice : (unit = empty) -> empty :=
+  fun (p : unit = empty) =>
+    transportf (fun x => x) p tt.
+
+Print exer_3_practice.
+
+About nat_rect.
+Check (nat_rect (fun _ => UU) empty (fun _ _ => unit)).
+Check (nat_rect (fun _ => UU)).
+
+Definition nat_map : nat -> UU
+  := nat_rect (fun _ => UU) empty (fun _ => (fun _ => unit)).
+
+About transportf.
+
+Definition exer_3 : (succ 0 = 0) -> empty :=
+  fun (p : succ 0 = 0) =>
+    transportf (nat_map) p tt.
+
+Definition exer_4 : ∑ (A : Universe) (A → empty) → empty.
+
+*)

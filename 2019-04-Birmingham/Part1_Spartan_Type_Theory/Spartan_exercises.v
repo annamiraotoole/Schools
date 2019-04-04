@@ -8,22 +8,62 @@ Axiom fill_me : forall {X : UU}, X.
 
 (** Exercise 1.1. A × (B + C) → A × B + A × C, given types A, B, C *)
 
+(*
+Definition coprod_r (A B C : UU)
+  : (A × B) -> (A × C) -> A × (B ⨿ C).
+Proof.
+  use coprod_rect.
+Qed.
+ *)
+
+Axiom X Y A B C : UU.
+Check @coprod_rect X Y (fun _ => coprod (A × C) (A × B)).
+Check @coprod_rect A B.
+Locate "×".
+Search dirprod.
+
 Definition exercise_1_1 (A B C : UU)
-  : A × (B ⨿ C) → (A × B) ⨿ (A × C) := fill_me.
+  : A × (B ⨿ C) → (A × B) ⨿ (A × C)
+  := fun x => coprod_rect (fun _ => coprod (A × B) (A × C))
+                          (fun b => inl (dirprod_pr1 x,, b))
+                          (fun c => inr (dirprod_pr1 x,, c))
+                          (dirprod_pr2 x).
+
+(*
+Exercise 1 with pattern matching
+
+  := fun x =>
+       match x with
+         (a ,, inl b) => inl (a,, b)
+       | (a ,, inr c) => inr (a,, c)
+       end.
+
+Either = coprod
+Left = inl
+Right = inr
+*)
 
 (** Exercise 1.2. (A → A) → (A → A), given type A
 
     for extra credit, write down *five* elements of this type *)
 
+Definition id (A : UU) : A -> A := fun x => x.
+
+Check idfun. (* idfun TYPE ARG *)
+
 Definition exercise_1_2 (A : UU)
   : (A → A) → (A → A)
-  := fill_me.
+  := idfun (A -> A).
+
+(* other answer: fun (x : A -> A) => x. *)
 
 (** Exercise 1.3. Id_nat (0, succ 0) → empty *)
 
+Check transportf.
+
 Theorem exercise_1_3 : (0 = 1) → empty.
 Proof.
-  exact fill_me.
+  exact transportf
 Qed.
 
 (** Exercise 1.4. ∑ (A : Universe) (A → empty) *)
